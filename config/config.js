@@ -1,0 +1,1 @@
+const sessionSecret = "randomsecretssofmysessionvalues123"
