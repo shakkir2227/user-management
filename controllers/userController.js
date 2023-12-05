@@ -14,25 +14,31 @@ const loadRegister = (req, res) => {
 
 const insertUser = async (req, res) => {
     try {
-        const spassword = await bcrypt.hash(req.body.password, 10);
-        const user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            mobile: req.body.mno,
-            password: spassword,
-            is_Admin: 0,
-
-        });
-
-        const userData = await user.save();
-
-        if (userData) {
-            res.render("registration", { message: "your registration has been completed successfully" })
+        const repeatedEmail = await User.findOne({ email: req.body.email });
+        if (repeatedEmail) {
+            res.render("registration", { message: "Already registered.Please login to continue" })
         }
         else {
-            res.render("registration", { message: "your registration has been failed" })
-        }
+            const spassword = await bcrypt.hash(req.body.password, 10);
+            const user = new User({
+                name: req.body.name,
+                email: req.body.email,
+                mobile: req.body.mno,
+                password: spassword,
+                is_Admin: 0,
 
+            });
+
+            const userData = await user.save();
+
+            if (userData) {
+                res.render("registration", { message: "your registration has been completed successfully" })
+            }
+            else {
+                res.render("registration", { message: "your registration has been failed" })
+            }
+
+        }
     }
     catch (error) {
         console.log(error.message);
